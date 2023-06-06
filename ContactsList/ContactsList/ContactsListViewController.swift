@@ -13,7 +13,7 @@ final class ContactsListViewController: UIViewController {
     
     // MARK: - Parameters
     
-    private var contactsList = [CNMutableContact]()
+    private var contactsList = [CNContact]()
     private var displayData = [DisplayData]() {
         didSet {
             DispatchQueue.main.async {
@@ -69,7 +69,6 @@ final class ContactsListViewController: UIViewController {
     private func fetchContacts() {
         DispatchQueue.global().async {
             let store = CNContactStore()
-            
             store.requestAccess(for: .contacts) { granted, error in
                 if granted {
                     let keys = [CNContactGivenNameKey,
@@ -116,7 +115,6 @@ final class ContactsListViewController: UIViewController {
             emailsInfo.forEach { emailDetails in
                 emails.append(String(emailDetails.value))
             }
-            
             self.displayData.append(DisplayData(firstName: $0.givenName, lastName: $0.familyName, organizationName: $0.organizationName, contactImage: updater.prepareImage(contactImageData: $0.imageData), phones: phones, emails: emails))
         }
     }
@@ -148,6 +146,11 @@ extension ContactsListViewController: UITableViewDataSource, UITableViewDelegate
             self.contactsListTableView.endUpdates()
         }
     }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let vc = ContactDetailsViewController()
+        navigationController?.pushViewController(vc, animated: true)
+    }
 }
 
 // MARK: - IBActions
@@ -164,7 +167,6 @@ extension ContactsListViewController {
     
     @objc func addButtonTapped() {
         print("addButtonTapped")
-        self.contactsListTableView.reloadData()
     }
 }
 

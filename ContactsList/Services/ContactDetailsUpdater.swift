@@ -13,6 +13,7 @@ struct ContactDetailsUpdater {
         numberWithDigitsOnly.insert("+", at: 0)
         numberWithDigitsOnly.insert(" (", at: 4)
         numberWithDigitsOnly.insert(") ", at: 7)
+        
         if numberWithDigitsOnly.count > 11 {
             numberWithDigitsOnly.insert("-", at: 11)
         }
@@ -20,7 +21,6 @@ struct ContactDetailsUpdater {
         if numberWithDigitsOnly.count > 14 {
             numberWithDigitsOnly.insert("-", at: 14)
         }
-        
         let updatedNumber = numberWithDigitsOnly.joined()
         return updatedNumber
     }
