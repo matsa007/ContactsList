@@ -35,5 +35,42 @@ final class ContactsListViewController: UIViewController {
             }
         }
     }
+    
+    // MARK: - Contacts fetching
+    
+    private func fetchContacts() {
+        DispatchQueue.global().async {
+            let store = CNContactStore()
+            
+            store.requestAccess(for: .contacts) { granted, error in
+                if granted {
+                    let keys = [CNContactGivenNameKey,
+                                CNContactFamilyNameKey,
+                                CNContactPhoneNumbersKey,
+                                CNContactEmailAddressesKey,
+                                CNContactImageDataKey,
+                                CNContactOrganizationNameKey]
+                    
+                    let request = CNContactFetchRequest(keysToFetch: keys as [CNKeyDescriptor])
+                    do {
+                        try store.enumerateContacts(with: request) { contact, _ in
+                            let contactDetails = CNMutableContact()
+                            contactDetails.imageData = contact.imageData
+                            contactDetails.givenName = contact.givenName
+                            contactDetails.familyName = contact.familyName
+                            contactDetails.organizationName = contact.organizationName
+                            contactDetails.phoneNumbers = contact.phoneNumbers
+                            contactDetails.emailAddresses = contact.emailAddresses
+                            self.contactsList.append(contactDetails)
+                        }
+                    } catch {
+                        self.alertMessage(error.localizedDescription)
+                    }
+                } else {
+                    self.alertAddPermissionForContacts("Разрешите доступ к контактам")
+                }
+            }
+        }
+    }
 }
 
