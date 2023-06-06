@@ -139,13 +139,27 @@ extension ContactsListViewController: UITableViewDataSource, UITableViewDelegate
         cell.setCellView(contactFirstName: contact.firstName, contactLastName: contact.lastName, contactImage: contact.contactImage)
         return cell
     }
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            self.contactsListTableView.beginUpdates()
+            self.displayData.remove(at: indexPath.row)
+            self.contactsListTableView.deleteRows(at: [indexPath], with: .fade)
+            self.contactsListTableView.endUpdates()
+        }
+    }
 }
 
 // MARK: - IBActions
 
 extension ContactsListViewController {
     @objc func editButtonTapped() {
-        print("editButtonTapped")
+        switch self.contactsListTableView.isEditing {
+        case true:
+            self.contactsListTableView.isEditing = false
+        case false:
+            self.contactsListTableView.isEditing = true
+        }
     }
     
     @objc func addButtonTapped() {
