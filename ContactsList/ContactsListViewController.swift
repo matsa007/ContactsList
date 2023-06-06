@@ -6,8 +6,9 @@
 //
 
 import UIKit
+import SnapKit
 
-class ContactsListViewController: UIViewController {
+final class ContactsListViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
