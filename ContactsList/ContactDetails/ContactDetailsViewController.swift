@@ -193,7 +193,7 @@ extension ContactDetailsViewController {
     }
         
     @objc func editButtonTapped() {
-        let vc = ContactEditingViewController()
+        let vc = ContactEditingViewController(contactDetails: self.contactDetails)
         self.navigationController?.pushViewController(vc, animated: true)
     }
 }
