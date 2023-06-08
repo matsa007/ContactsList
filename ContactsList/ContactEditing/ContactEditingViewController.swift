@@ -11,7 +11,10 @@ final class ContactEditingViewController: UIViewController {
     
     // MARK: - Parameters
     
-    private let contactDetails: DisplayData
+    private var contactDetails: DisplayData
+    var closure: ((DisplayData) -> ())?
+    private var updatedPhones = [String]()
+    private var updatedEmails = [String]()
     
     // MARK: - GUI
     
@@ -58,7 +61,6 @@ final class ContactEditingViewController: UIViewController {
         textField.backgroundColor = UIColor(red: 230/255, green: 230/255, blue: 230/255, alpha: 1)
         textField.attributedPlaceholder = NSAttributedString(string: "Организация", attributes: [NSAttributedString.Key.foregroundColor: UIColor.darkGray])
         textField.text = self.contactDetails.organizationName
-        textField.text = self.contactDetails.lastName
         textField.isUserInteractionEnabled = true
         return textField
     }()
@@ -228,7 +230,15 @@ extension ContactEditingViewController: UITableViewDataSource, UITableViewDelega
             cell.dataTextField.tag = indexPath.row
             cell.closure = { [weak self] (tag, phone) in
                 guard let self else { return }
-                print("Transfered phone = \(phone), for row = \(tag)")
+                self.updatedPhones = self.contactDetails.phones
+                if phone != "" {
+                    self.updatedPhones[tag] = phone
+                } else {
+                    self.updatedPhones.remove(at: tag)
+                }
+                
+                print("updatedPhones = \(updatedPhones)")
+                
             }
             cell.setCellView(phoneNumberOrEmail: phone)
         case self.emailsTableView:
@@ -236,7 +246,12 @@ extension ContactEditingViewController: UITableViewDataSource, UITableViewDelega
             cell.dataTextField.tag = indexPath.row
             cell.closure = { [weak self] (tag, email) in
                 guard let self else { return }
-                print("Transfered email = \(email), for row = \(tag)")
+                self.updatedEmails = self.contactDetails.emails
+                if email != "" {
+                    self.updatedEmails[tag] = email
+                } else {
+                    self.updatedEmails.remove(at: tag)
+                }
             }
             cell.setCellView(phoneNumberOrEmail: email)
         default:
@@ -254,6 +269,15 @@ extension ContactEditingViewController {
     }
     
     @objc func editingDoneTapped() {
+        let updater = ContactDetailsUpdater()
+        self.contactDetails.contactImage = self.contactImageView.image ?? updater.prepareImage(contactImageData: nil)
+        self.contactDetails.firstName = self.firstNameTextField.text ?? ""
+        self.contactDetails.lastName = self.lastNameTextField.text ?? ""
+        self.contactDetails.organizationName = self.organizationNameTextField.text ?? ""
+        self.contactDetails.phones = self.updatedPhones
+        self.contactDetails.emails = self.updatedEmails
+        self.closure?(self.contactDetails)
+        self.navigationController?.popViewController(animated: true)
         print("editingDoneTapped")
     }
 }

@@ -11,7 +11,8 @@ final class ContactDetailsViewController: UIViewController {
     
     // MARK: - Parameters
     
-    private let contactDetails: DisplayData
+    private var contactDetails: DisplayData
+    var closure: ((DisplayData) -> ())?
     
     // MARK: - GUI
     
@@ -191,11 +192,18 @@ extension ContactDetailsViewController: UITableViewDataSource, UITableViewDelega
 
 extension ContactDetailsViewController {
     @objc func closeButtonTapped() {
+        self.closure?(self.contactDetails)
         self.navigationController?.popViewController(animated: true)
     }
         
     @objc func editButtonTapped() {
         let vc = ContactEditingViewController(contactDetails: self.contactDetails)
+        vc.closure = { [weak self] contact in
+            guard let self else { return }
+            self.contactDetails = contact
+            self.phonesTableView.reloadData()
+            self.emailsTableView.reloadData()
+        }
         self.navigationController?.pushViewController(vc, animated: true)
     }
 }

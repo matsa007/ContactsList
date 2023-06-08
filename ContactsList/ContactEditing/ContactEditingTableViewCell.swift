@@ -66,7 +66,5 @@ extension ContactEditingTableViewCell: UITextFieldDelegate {
     func textFieldDidEndEditing(_ textField: UITextField) {
         let tag = textField.tag
         self.closure?(tag, self.dataTextField.text ?? "")
-        print("TAG = \(tag)")
-        print("UPDATED = \(self.dataTextField.text)")
     }
 }

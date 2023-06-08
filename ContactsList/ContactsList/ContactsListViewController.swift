@@ -150,6 +150,10 @@ extension ContactsListViewController: UITableViewDataSource, UITableViewDelegate
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let contact = self.displayData[indexPath.row]
         let vc = ContactDetailsViewController(contactDetails: contact)
+        vc.closure = { [weak self] contact in
+            guard let self else { return }
+            self.displayData[indexPath.row] = contact
+        }
         self.navigationController?.pushViewController(vc, animated: true)
     }
 }
@@ -169,13 +173,4 @@ extension ContactsListViewController {
     @objc func addButtonTapped() {
         print("addButtonTapped")
     }
-}
-
-struct DisplayData {
-    let firstName: String
-    let lastName: String
-    let organizationName: String
-    let contactImage: UIImage
-    let phones: [String]
-    let emails: [String]
 }
