@@ -63,6 +63,16 @@ final class ContactEditingViewController: UIViewController {
         return textField
     }()
     
+    private lazy var phonesTableView: UITableView = {
+        let table = UITableView()
+        return table
+    }()
+    
+    private lazy var emailsTableView: UITableView = {
+        let table = UITableView()
+        return table
+    }()
+    
     // MARK: - Initialization
     
     init(contactDetails: DisplayData) {
@@ -78,9 +88,18 @@ final class ContactEditingViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.backgroundColor = .yellow
+        self.view.backgroundColor = .white
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(editingDoneTapped))
         self.navigationItem.title = "Изменение контакта"
+        self.firstNameTextField.delegate = self
+        self.lastNameTextField.delegate = self
+        self.organizationNameTextField.delegate = self
+        self.phonesTableView.dataSource = self
+        self.phonesTableView.delegate = self
+        self.emailsTableView.dataSource = self
+        self.emailsTableView.delegate = self
+        self.phonesTableView.register(ContactEditingTableViewCell.self, forCellReuseIdentifier: "contact_editing_cell")
+        self.emailsTableView.register(ContactEditingTableViewCell.self, forCellReuseIdentifier: "contact_editing_cell")
     }
     
     override func viewDidLayoutSubviews() {
@@ -101,6 +120,8 @@ final class ContactEditingViewController: UIViewController {
         self.contactEditingScrollView.addSubview(self.firstNameTextField)
         self.contactEditingScrollView.addSubview(self.lastNameTextField)
         self.contactEditingScrollView.addSubview(self.organizationNameTextField)
+        self.contactEditingScrollView.addSubview(self.phonesTableView)
+        self.contactEditingScrollView.addSubview(self.emailsTableView)
     }
     
     // MARK: - Constraints
@@ -145,6 +166,73 @@ final class ContactEditingViewController: UIViewController {
             $0.width.equalToSuperview().multipliedBy(0.9)
             $0.height.equalToSuperview().dividedBy(20)
         }
+        
+        self.phonesTableView.snp.makeConstraints {
+            $0.top.equalTo(self.organizationNameTextField.snp.bottom).offset(10)
+            $0.centerX.equalToSuperview()
+            $0.width.equalToSuperview().multipliedBy(0.9)
+            $0.height.equalToSuperview().dividedBy(4)
+        }
+
+        self.emailsTableView.snp.makeConstraints {
+            $0.top.equalTo(self.phonesTableView.snp.bottom)
+            $0.centerX.equalToSuperview()
+            $0.width.equalToSuperview().multipliedBy(0.9)
+            $0.height.equalToSuperview().dividedBy(4)
+        }
+    }
+}
+
+// MARK: - Extensions
+
+extension ContactEditingViewController: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
+}
+
+extension ContactEditingViewController: UITableViewDataSource, UITableViewDelegate {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        switch tableView {
+        case self.phonesTableView:
+            return self.contactDetails.phones.count
+        case self.emailsTableView:
+            return self.contactDetails.emails.count
+        default:
+            return 0
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        switch tableView {
+        case self.phonesTableView:
+            if self.contactDetails.phones.count > 0 {
+               return "Телефонные номера:"
+            } else { return "" }
+        case self.emailsTableView:
+            if self.contactDetails.emails.count > 0 {
+                return "Электронные почты:"
+            } else { return "" }
+        default:
+            return ""
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "contact_editing_cell", for: indexPath) as? ContactEditingTableViewCell else { return UITableViewCell() }
+        
+        switch tableView {
+        case self.phonesTableView:
+            let phone = self.contactDetails.phones[indexPath.row]
+            cell.setCellView(phoneNumberOrEmail: phone)
+        case self.emailsTableView:
+            let email = self.contactDetails.emails[indexPath.row]
+            cell.setCellView(phoneNumberOrEmail: email)
+        default:
+            break
+        }
+        return cell
     }
 }
 

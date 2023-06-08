@@ -62,6 +62,7 @@ final class ContactDetailsViewController: UIViewController {
         self.view.backgroundColor = .white
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .close, target: self, action: #selector(closeButtonTapped))
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(editButtonTapped))
+        self.navigationItem.title = "Детали контакта"
         self.phonesTableView.dataSource = self
         self.phonesTableView.delegate = self
         self.emailsTableView.dataSource = self
@@ -171,6 +172,7 @@ extension ContactDetailsViewController: UITableViewDataSource, UITableViewDelega
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "contact_details_cell", for: indexPath) as? ContactDetailsTableViewCell else { return UITableViewCell() }
+        
         switch tableView {
         case self.phonesTableView:
             let phone = self.contactDetails.phones[indexPath.row]
