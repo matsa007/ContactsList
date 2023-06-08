@@ -11,7 +11,7 @@ final class ContactEditingTableViewCell: UITableViewCell {
     
     // MARK: - GUI
     
-    private lazy var dataTextField: UITextField = {
+    lazy var dataTextField: UITextField = {
         let textField = UITextField()
         textField.font = UIFont(name: "HelveticaNeue", size: 17)
         textField.textAlignment = .left
@@ -60,6 +60,8 @@ final class ContactEditingTableViewCell: UITableViewCell {
 
 extension ContactEditingTableViewCell: UITextFieldDelegate {
     func textFieldDidEndEditing(_ textField: UITextField) {
+        let tag = textField.tag
+        print("TAG = \(tag)")
         print("textFieldDidEndEditing")
     }
 }

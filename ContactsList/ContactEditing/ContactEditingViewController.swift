@@ -225,9 +225,11 @@ extension ContactEditingViewController: UITableViewDataSource, UITableViewDelega
         switch tableView {
         case self.phonesTableView:
             let phone = self.contactDetails.phones[indexPath.row]
+            cell.dataTextField.tag = indexPath.row
             cell.setCellView(phoneNumberOrEmail: phone)
         case self.emailsTableView:
             let email = self.contactDetails.emails[indexPath.row]
+            cell.dataTextField.tag = indexPath.row
             cell.setCellView(phoneNumberOrEmail: email)
         default:
             break
