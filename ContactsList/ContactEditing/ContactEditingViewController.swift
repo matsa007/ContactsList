@@ -224,7 +224,8 @@ extension ContactEditingViewController: UITableViewDataSource, UITableViewDelega
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "contact_editing_cell", for: indexPath) as? ContactEditingTableViewCell else { return UITableViewCell() }
-        
+        self.updatedPhones = self.contactDetails.phones
+        self.updatedEmails = self.contactDetails.emails
         switch tableView {
         case self.phonesTableView:
             let phone = self.contactDetails.phones[indexPath.row]
@@ -238,6 +239,7 @@ extension ContactEditingViewController: UITableViewDataSource, UITableViewDelega
                     self.updatedPhones.remove(at: tag)
                 }
             }
+            
             cell.setCellView(phoneNumberOrEmail: phone)
         case self.emailsTableView:
             let email = self.contactDetails.emails[indexPath.row]
@@ -251,6 +253,7 @@ extension ContactEditingViewController: UITableViewDataSource, UITableViewDelega
                     self.updatedEmails.remove(at: tag)
                 }
             }
+            
             cell.setCellView(phoneNumberOrEmail: email)
         default:
             break

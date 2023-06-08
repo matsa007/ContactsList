@@ -22,6 +22,7 @@ final class ContactEditingTableViewCell: UITableViewCell {
         textField.backgroundColor = UIColor(red: 230/255, green: 230/255, blue: 230/255, alpha: 1)
         textField.isUserInteractionEnabled = true
         textField.resignFirstResponder()
+        textField.addTarget(self, action: #selector(textFieldEditingChanged), for: .editingChanged)
         return textField
     }()
     
@@ -30,8 +31,7 @@ final class ContactEditingTableViewCell: UITableViewCell {
     override func layoutSubviews() {
         super.layoutSubviews()
         self.addSubViews()
-        self.setConstraints()
-        self.dataTextField.delegate = self
+        self.setConstraints()  
     }
         
     override func prepareForReuse() {
@@ -60,10 +60,10 @@ final class ContactEditingTableViewCell: UITableViewCell {
     }
 }
 
-// MARK: - Extensions
+// MARK: - IBActions
 
-extension ContactEditingTableViewCell: UITextFieldDelegate {
-    func textFieldDidEndEditing(_ textField: UITextField) {
+extension ContactEditingTableViewCell {
+    @objc func textFieldEditingChanged(_ textField: UITextField) {
         let tag = textField.tag
         self.closure?(tag, self.dataTextField.text ?? "")
     }
