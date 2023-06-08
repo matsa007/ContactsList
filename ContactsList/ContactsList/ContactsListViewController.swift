@@ -150,7 +150,7 @@ extension ContactsListViewController: UITableViewDataSource, UITableViewDelegate
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let contact = self.displayData[indexPath.row]
         let vc = ContactDetailsViewController(contactDetails: contact)
-        navigationController?.pushViewController(vc, animated: true)
+        self.navigationController?.pushViewController(vc, animated: true)
     }
 }
 

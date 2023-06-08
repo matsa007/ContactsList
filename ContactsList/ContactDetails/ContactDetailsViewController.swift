@@ -189,10 +189,11 @@ extension ContactDetailsViewController: UITableViewDataSource, UITableViewDelega
 
 extension ContactDetailsViewController {
     @objc func closeButtonTapped() {
-        navigationController?.popViewController(animated: true)
+        self.navigationController?.popViewController(animated: true)
     }
         
     @objc func editButtonTapped() {
-        print("editButtonTapped")
+        let vc = ContactEditingViewController()
+        self.navigationController?.pushViewController(vc, animated: true)
     }
 }
