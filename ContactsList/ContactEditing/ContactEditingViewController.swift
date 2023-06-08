@@ -15,6 +15,7 @@ final class ContactEditingViewController: UIViewController {
     var closure: ((DisplayData) -> ())?
     private var updatedPhones = [String]()
     private var updatedEmails = [String]()
+    private let imagePicker = UIImagePickerController()
     
     // MARK: - GUI
     
@@ -236,9 +237,6 @@ extension ContactEditingViewController: UITableViewDataSource, UITableViewDelega
                 } else {
                     self.updatedPhones.remove(at: tag)
                 }
-                
-                print("updatedPhones = \(updatedPhones)")
-                
             }
             cell.setCellView(phoneNumberOrEmail: phone)
         case self.emailsTableView:
@@ -261,11 +259,25 @@ extension ContactEditingViewController: UITableViewDataSource, UITableViewDelega
     }
 }
 
+extension ContactEditingViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        if let pickedImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
+            self.contactImageView.image = pickedImage
+        }
+        dismiss(animated: true, completion: nil)
+    }
+}
+
 // MARK: - IBActions
 
 extension ContactEditingViewController {
     @objc func editImageButtonTapped() {
-        print("editImageButtonTapped")
+        if UIImagePickerController.isSourceTypeAvailable(.photoLibrary) {
+            self.imagePicker.delegate = self
+            self.imagePicker.sourceType = .photoLibrary
+            self.imagePicker.allowsEditing = false
+            present(self.imagePicker, animated: true, completion: nil)
+        }
     }
     
     @objc func editingDoneTapped() {
@@ -278,6 +290,5 @@ extension ContactEditingViewController {
         self.contactDetails.emails = self.updatedEmails
         self.closure?(self.contactDetails)
         self.navigationController?.popViewController(animated: true)
-        print("editingDoneTapped")
     }
 }
