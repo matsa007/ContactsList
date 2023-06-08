@@ -9,6 +9,10 @@ import UIKit
 
 final class ContactEditingTableViewCell: UITableViewCell {
     
+    // MARK: - Parameters
+    
+    var closure: ((Int, String) -> ())?
+    
     // MARK: - GUI
     
     lazy var dataTextField: UITextField = {
@@ -61,7 +65,8 @@ final class ContactEditingTableViewCell: UITableViewCell {
 extension ContactEditingTableViewCell: UITextFieldDelegate {
     func textFieldDidEndEditing(_ textField: UITextField) {
         let tag = textField.tag
+        self.closure?(tag, self.dataTextField.text ?? "")
         print("TAG = \(tag)")
-        print("textFieldDidEndEditing")
+        print("UPDATED = \(self.dataTextField.text)")
     }
 }

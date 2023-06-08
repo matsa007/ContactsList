@@ -226,10 +226,18 @@ extension ContactEditingViewController: UITableViewDataSource, UITableViewDelega
         case self.phonesTableView:
             let phone = self.contactDetails.phones[indexPath.row]
             cell.dataTextField.tag = indexPath.row
+            cell.closure = { [weak self] (tag, phone) in
+                guard let self else { return }
+                print("Transfered phone = \(phone), for row = \(tag)")
+            }
             cell.setCellView(phoneNumberOrEmail: phone)
         case self.emailsTableView:
             let email = self.contactDetails.emails[indexPath.row]
             cell.dataTextField.tag = indexPath.row
+            cell.closure = { [weak self] (tag, email) in
+                guard let self else { return }
+                print("Transfered email = \(email), for row = \(tag)")
+            }
             cell.setCellView(phoneNumberOrEmail: email)
         default:
             break
