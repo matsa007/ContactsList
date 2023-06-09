@@ -11,13 +11,21 @@ final class ContactEditingViewController: UIViewController {
     
     // MARK: - Parameters
     
-    private var contactDetails: DisplayData
     var closure: ((DisplayData) -> ())?
+    
+    private var contactDetails: DisplayData
     private var updatedPhones = [String]()
     private var updatedEmails = [String]()
-    private let imagePicker = UIImagePickerController()
     
     // MARK: - GUI
+    
+    private lazy var imagePicker: UIImagePickerController = {
+        let imagePicker = UIImagePickerController()
+        imagePicker.delegate = self
+        imagePicker.sourceType = .photoLibrary
+        imagePicker.allowsEditing = true
+        return imagePicker
+    }()
     
     private lazy var contactEditingScrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -33,7 +41,7 @@ final class ContactEditingViewController: UIViewController {
     private lazy var editImageButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("Изменить", for: .normal)
-        button.addTarget(self, action: #selector(editImageButtonTapped), for: .touchUpInside)
+        button.addTarget(self, action: #selector(self.editImageButtonTapped), for: .touchUpInside)
         return button
     }()
     
@@ -92,7 +100,7 @@ final class ContactEditingViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .white
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(editingDoneTapped))
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(self.editingDoneTapped))
         self.navigationItem.title = "Изменение контакта"
         self.firstNameTextField.delegate = self
         self.lastNameTextField.delegate = self
@@ -186,7 +194,7 @@ final class ContactEditingViewController: UIViewController {
     }
 }
 
-// MARK: - Extensions
+// MARK: - UITextFieldDelegate
 
 extension ContactEditingViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
@@ -194,6 +202,8 @@ extension ContactEditingViewController: UITextFieldDelegate {
         return true
     }
 }
+
+// MARK: - UITableViewDataSource, UITableViewDelegate
 
 extension ContactEditingViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -262,6 +272,8 @@ extension ContactEditingViewController: UITableViewDataSource, UITableViewDelega
     }
 }
 
+// MARK: - UIImagePickerControllerDelegate, UINavigationControllerDelegate
+
 extension ContactEditingViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         if let pickedImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
@@ -273,12 +285,9 @@ extension ContactEditingViewController: UIImagePickerControllerDelegate, UINavig
 
 // MARK: - IBActions
 
-extension ContactEditingViewController {
+private extension ContactEditingViewController {
     @objc func editImageButtonTapped() {
         if UIImagePickerController.isSourceTypeAvailable(.photoLibrary) {
-            self.imagePicker.delegate = self
-            self.imagePicker.sourceType = .photoLibrary
-            self.imagePicker.allowsEditing = false
             present(self.imagePicker, animated: true, completion: nil)
         }
     }

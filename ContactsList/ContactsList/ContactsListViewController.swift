@@ -33,28 +33,30 @@ final class ContactsListViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         self.checkContactsAccessAndAsk()
-        self.fetchContacts()
         self.view.backgroundColor = .white
-        self.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(editButtonTapped))
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addButtonTapped))
+        self.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(self.editButtonTapped))
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(self.addButtonTapped))
         self.navigationItem.title = "Список контактов"
         self.contactsListTableView.delegate = self
         self.contactsListTableView.dataSource = self
         self.contactsListTableView.register(ContactsListTableViewCell.self, forCellReuseIdentifier: "contacts_list_cell")
         self.view.addSubview(self.contactsListTableView)
         self.contactsListTableView.snp.makeConstraints { $0.edges.equalToSuperview() }
+        self.fetchContacts()
     }
     
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
+
         self.view.layoutIfNeeded()
     }
     
     // MARK: - Checking access to contacts
     
     private func checkContactsAccessAndAsk() {
-        CNContactStore().requestAccess(for: .contacts) { (access, error) in
+        CNContactStore().requestAccess(for: .contacts) { (access, _) in
             switch access {
             case true:
                 break
@@ -120,7 +122,7 @@ final class ContactsListViewController: UIViewController {
     }
 }
 
-// MARK: - Extensions
+// MARK: - UITableViewDataSource, UITableViewDelegate
 
 extension ContactsListViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -160,7 +162,7 @@ extension ContactsListViewController: UITableViewDataSource, UITableViewDelegate
 
 // MARK: - IBActions
 
-extension ContactsListViewController {
+private extension ContactsListViewController {
     @objc func editButtonTapped() {
         switch self.contactsListTableView.isEditing {
         case true:

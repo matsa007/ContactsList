@@ -7,7 +7,7 @@
 
 import UIKit
 
-class ContactsListTableViewCell: UITableViewCell {
+final class ContactsListTableViewCell: UITableViewCell {
     
     // MARK: - GUI
     
@@ -53,6 +53,7 @@ class ContactsListTableViewCell: UITableViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
+        
         self.contactPhotoImageView.image = nil
         self.contactFirstNameLabel.text = nil
         self.contactLastNameLabel.text = nil
@@ -60,6 +61,7 @@ class ContactsListTableViewCell: UITableViewCell {
     
     override func layoutSubviews() {
         super.layoutSubviews()
+        
         self.addSubViews()
         self.setConstraints()
         self.contactPhotoImageView.clipsToBounds = true

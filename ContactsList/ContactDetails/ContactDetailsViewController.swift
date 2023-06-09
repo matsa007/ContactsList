@@ -11,8 +11,9 @@ final class ContactDetailsViewController: UIViewController {
     
     // MARK: - Parameters
     
-    private var contactDetails: DisplayData
     var closure: ((DisplayData) -> ())?
+    
+    private var contactDetails: DisplayData
     
     // MARK: - GUI
     
@@ -49,6 +50,7 @@ final class ContactDetailsViewController: UIViewController {
     
     init(contactDetails: DisplayData) {
         self.contactDetails = contactDetails
+        
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -60,9 +62,10 @@ final class ContactDetailsViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         self.view.backgroundColor = .white
-        self.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .close, target: self, action: #selector(closeButtonTapped))
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(editButtonTapped))
+        self.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .close, target: self, action: #selector(self.closeButtonTapped))
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(self.editButtonTapped))
         self.navigationItem.title = "Детали контакта"
         self.phonesTableView.dataSource = self
         self.phonesTableView.delegate = self
@@ -74,6 +77,7 @@ final class ContactDetailsViewController: UIViewController {
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
+        
         self.contactImageView.clipsToBounds = true
         self.contactImageView.layer.cornerRadius = self.view.frame.width / 5
         self.addSubViews()
@@ -142,7 +146,7 @@ final class ContactDetailsViewController: UIViewController {
     }
 }
 
-// MARK: - Extensions
+// MARK: - UITableViewDataSource, UITableViewDelegate
 
 extension ContactDetailsViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -190,7 +194,7 @@ extension ContactDetailsViewController: UITableViewDataSource, UITableViewDelega
 
 // MARK: - IBActions
 
-extension ContactDetailsViewController {
+private extension ContactDetailsViewController {
     @objc func closeButtonTapped() {
         self.closure?(self.contactDetails)
         self.navigationController?.popViewController(animated: true)
