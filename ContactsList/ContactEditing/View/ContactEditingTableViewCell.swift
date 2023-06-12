@@ -43,6 +43,7 @@ final class ContactEditingTableViewCell: UITableViewCell {
     
     private func addSubViews() {
         self.contentView.addSubview(self.dataTextField)
+        
     }
     
     // MARK: - Constraints

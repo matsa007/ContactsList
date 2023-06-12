@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class ContactEditingViewController: UIViewController {
+class ContactEditingViewController: UIViewController {
     
     // MARK: - Parameters
     
@@ -32,7 +32,7 @@ final class ContactEditingViewController: UIViewController {
         return scrollView
     }()
     
-    private lazy var contactImageView: UIImageView = {
+    lazy var contactImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = self.contactDetails.contactImage
         return imageView
@@ -45,7 +45,7 @@ final class ContactEditingViewController: UIViewController {
         return button
     }()
     
-    private lazy var firstNameTextField: UITextField = {
+    lazy var firstNameTextField: UITextField = {
         let textField = UITextField()
         textField.backgroundColor = UIColor(red: 230/255, green: 230/255, blue: 230/255, alpha: 1)
         textField.attributedPlaceholder = NSAttributedString(string: "Имя", attributes: [NSAttributedString.Key.foregroundColor: UIColor.darkGray])
@@ -55,7 +55,7 @@ final class ContactEditingViewController: UIViewController {
         return textField
     }()
     
-    private lazy var lastNameTextField: UITextField = {
+    lazy var lastNameTextField: UITextField = {
         let textField = UITextField()
         textField.backgroundColor = UIColor(red: 230/255, green: 230/255, blue: 230/255, alpha: 1)
         textField.attributedPlaceholder = NSAttributedString(string: "Фамилия", attributes: [NSAttributedString.Key.foregroundColor: UIColor.darkGray])
@@ -65,7 +65,7 @@ final class ContactEditingViewController: UIViewController {
         return textField
     }()
     
-    private lazy var organizationNameTextField: UITextField = {
+    lazy var organizationNameTextField: UITextField = {
         let textField = UITextField()
         textField.backgroundColor = UIColor(red: 230/255, green: 230/255, blue: 230/255, alpha: 1)
         textField.attributedPlaceholder = NSAttributedString(string: "Организация", attributes: [NSAttributedString.Key.foregroundColor: UIColor.darkGray])
@@ -82,6 +82,20 @@ final class ContactEditingViewController: UIViewController {
     private lazy var emailsTableView: UITableView = {
         let table = UITableView()
         return table
+    }()
+    
+    private lazy var addNewPhoneButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("+ Добавить телефон", for: .normal)
+        button.addTarget(self, action: #selector(self.addNewPhoneButtonTapped), for: .touchUpInside)
+        return button
+    }()
+    
+    private lazy var addNewEmailButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("+ Добавить почту", for: .normal)
+        button.addTarget(self, action: #selector(self.addNewEmailButtonTapped), for: .touchUpInside)
+        return button
     }()
     
     // MARK: - Initialization
@@ -132,6 +146,7 @@ final class ContactEditingViewController: UIViewController {
         self.contactEditingScrollView.addSubview(self.lastNameTextField)
         self.contactEditingScrollView.addSubview(self.organizationNameTextField)
         self.contactEditingScrollView.addSubview(self.phonesTableView)
+//        self.contactEditingScrollView.addSubview(self.addNewDataButton)
         self.contactEditingScrollView.addSubview(self.emailsTableView)
     }
     
@@ -270,6 +285,25 @@ extension ContactEditingViewController: UITableViewDataSource, UITableViewDelega
         }
         return cell
     }
+    
+    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        let footerView = UIView()
+        switch tableView {
+            case self.phonesTableView:
+                footerView.addSubview(self.addNewPhoneButton)
+                self.addNewPhoneButton.snp.makeConstraints {
+                    $0.edges.equalToSuperview()
+                }
+            case self.emailsTableView:
+                footerView.addSubview(self.addNewEmailButton)
+                self.addNewEmailButton.snp.makeConstraints {
+                    $0.edges.equalToSuperview()
+                }
+            default:
+                return UIView()
+            }
+            return footerView
+    }
 }
 
 // MARK: - UIImagePickerControllerDelegate, UINavigationControllerDelegate
@@ -285,7 +319,9 @@ extension ContactEditingViewController: UIImagePickerControllerDelegate, UINavig
 
 // MARK: - IBActions
 
-private extension ContactEditingViewController {
+extension ContactEditingViewController {
+    
+    
     @objc func editImageButtonTapped() {
         if UIImagePickerController.isSourceTypeAvailable(.photoLibrary) {
             present(self.imagePicker, animated: true, completion: nil)
@@ -294,6 +330,9 @@ private extension ContactEditingViewController {
     
     @objc func editingDoneTapped() {
         let updater = ContactDetailsUpdater()
+        self.updatedPhones = self.updatedPhones.map {
+            updater.updatePhoneNumber(number: $0)
+        }
         self.contactDetails.contactImage = self.contactImageView.image ?? updater.prepareImage(contactImageData: nil)
         self.contactDetails.firstName = self.firstNameTextField.text ?? ""
         self.contactDetails.lastName = self.lastNameTextField.text ?? ""
@@ -302,5 +341,15 @@ private extension ContactEditingViewController {
         self.contactDetails.emails = self.updatedEmails
         self.closure?(self.contactDetails)
         self.navigationController?.popViewController(animated: true)
+    }
+    
+    @objc func addNewPhoneButtonTapped() {
+        self.contactDetails.phones.append("")
+        self.phonesTableView.reloadData()
+    }
+    
+    @objc func addNewEmailButtonTapped() {
+        self.contactDetails.emails.append("")
+        self.emailsTableView.reloadData()
     }
 }

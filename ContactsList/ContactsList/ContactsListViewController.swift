@@ -173,6 +173,13 @@ private extension ContactsListViewController {
     }
     
     @objc func addButtonTapped() {
-        print("addButtonTapped")
+        let updater = ContactDetailsUpdater()
+        let vc = ContactAddingViewController(contactDetails: DisplayData(firstName: "", lastName: "", organizationName: "", contactImage: updater.prepareImage(contactImageData: nil), phones: [""], emails: [""]))
+        vc.valueChangeHandler = { [weak self] contact in
+            guard let self else { return }
+            dump(contact)
+            self.displayData.append(contact)
+        }
+        self.navigationController?.pushViewController(vc, animated: true)
     }
 }
